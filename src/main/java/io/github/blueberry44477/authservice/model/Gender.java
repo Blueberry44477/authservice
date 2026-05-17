@@ -1,4 +1,4 @@
-package io.github.blueberry44477.model;
+package io.github.blueberry44477.authservice.model;
 
 public enum Gender {
     MALE,

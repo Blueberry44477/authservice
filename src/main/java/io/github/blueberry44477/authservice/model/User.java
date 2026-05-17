@@ -1,10 +1,11 @@
-package io.github.blueberry44477.model;
+package io.github.blueberry44477.authservice.model;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
@@ -27,6 +28,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
+@Entity
 @Table(name = "user")
 public class User {
     @Id

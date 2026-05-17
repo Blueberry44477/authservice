@@ -1,4 +1,4 @@
-package io.github.blueberry44477.exception.handler;
+package io.github.blueberry44477.authservice.exception.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import io.github.blueberry44477.exception.ApplicationErrorResponse;
-import io.github.blueberry44477.exception.EntityNotFoundException;
+import io.github.blueberry44477.authservice.exception.ApplicationErrorResponse;
+import io.github.blueberry44477.authservice.exception.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

@@ -1,10 +1,10 @@
-package io.github.blueberry44477.dto.response;
+package io.github.blueberry44477.authservice.dto.response;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-import io.github.blueberry44477.model.Gender;
+import io.github.blueberry44477.authservice.model.Gender;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

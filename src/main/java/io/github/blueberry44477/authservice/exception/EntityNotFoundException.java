@@ -1,4 +1,4 @@
-package io.github.blueberry44477.exception;
+package io.github.blueberry44477.authservice.exception;
 
 public class EntityNotFoundException extends RuntimeException {
     public EntityNotFoundException(String message) {
