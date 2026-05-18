@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class LoginRequest {
+public class SigninRequest {
     @NotBlank(message = "Email is required")
     @Email(message = "Wrong email format")
     private String email;

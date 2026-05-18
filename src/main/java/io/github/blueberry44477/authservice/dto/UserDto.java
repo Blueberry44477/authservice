@@ -1,8 +1,14 @@
-package io.github.blueberry44477.authservice.dto.response;
+package io.github.blueberry44477.authservice.dto;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import io.github.blueberry44477.authservice.model.Gender;
 
@@ -21,13 +27,14 @@ public class UserDto {
     private Long id;
     private String firstName;
     private String lastName;
-    private Gender sex;
     private String email;
+    private Gender sex;
     private LocalDate dob;
     private String phone;
     private String country;
     private String city;
     private byte[] avatar;
-    private Set<UserDto> friends = new HashSet<>();
-    private String token;
+
+    // @JsonIgnoreProperties("friends")
+    // private Set<UserDto> friends = new HashSet<>();
 }
