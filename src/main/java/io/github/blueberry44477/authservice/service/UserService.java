@@ -1,14 +1,18 @@
 package io.github.blueberry44477.authservice.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import io.github.blueberry44477.authservice.dto.UserDetailsImpl;
+import io.github.blueberry44477.authservice.dto.UserDto;
 import io.github.blueberry44477.authservice.mapper.UserMapStruct;
 import io.github.blueberry44477.authservice.model.User;
 import io.github.blueberry44477.authservice.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,6 +28,11 @@ public class UserService implements UserDetailsService {
         User user = repository.findByEmail(username)
             .orElseThrow(() -> new UsernameNotFoundException(username));
         return UserDetailsImpl.build(user);
+    }
+
+    public Page<UserDto> getFriendsByEmail(String email, Pageable pageable) {
+        Page<User> friends = repository.findFriendsByEmail(email, pageable);
+        return friends.map(userMapper::toDto);
     }
 
     // @Transactional(readOnly = true)
