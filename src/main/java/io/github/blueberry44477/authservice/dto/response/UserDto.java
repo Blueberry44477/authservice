@@ -29,4 +29,5 @@ public class UserDto {
     private String city;
     private byte[] avatar;
     private Set<UserDto> friends = new HashSet<>();
+    private String token;
 }
