@@ -27,6 +27,13 @@ public class MainController {
         return principal.getName();
     }
 
+    @GetMapping("/users")
+    public Page<UserDto> getUsers(
+        @PageableDefault(size = 10, sort = "firstName")
+        Pageable pageable) {
+        return service.getUsers(pageable);
+    }
+
     @GetMapping("/friends")
     public Page<UserDto> getFriends(
         Principal principal, 

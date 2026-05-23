@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import io.github.blueberry44477.authservice.dto.UserDetailsImpl;
 import io.github.blueberry44477.authservice.dto.UserDto;
@@ -23,6 +24,11 @@ public class UserService implements UserDetailsService {
     private final UserRepository repository;
     private final UserMapStruct userMapper;
 
+    @Transactional(readOnly = true)
+    public Page<UserDto> getUsers(Pageable pageable) {
+        return repository.findAll(pageable).map(userMapper::toDto);
+    }
+    
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = repository.findByEmail(username)
@@ -35,20 +41,8 @@ public class UserService implements UserDetailsService {
         return friends.map(userMapper::toDto);
     }
 
-    // @Transactional(readOnly = true)
-    // public Page<UserDto> getUsers(Pageable pageable) {
-    //     return repository.findAll(pageable).map(userMapper::toDto);
-    // }
-    // public Set<UserResponse> getUserFriends(Long userId) {
-    //     User user = repository.findById(userId)
-    //             .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
-        
-    //     // Мапимо Set<User> у Set<UserResponse> для безпечного відправлення на фронтенд
-    //     return user.getFriends().stream()
-    //             .map(userMapper::toResponse)
-    //             .collect(Collectors.toSet());
-    // }
 
+    //TODO
     // @Transactional
     // public void addFriend(Long userId, Long friendId) {
     //     if (userId.equals(friendId)) {
@@ -64,6 +58,7 @@ public class UserService implements UserDetailsService {
     //     repository.save(user); 
     // }
 
+    //TODO
     // @Transactional
     // public void removeFriend(Long userId, Long friendId) {
     //     User user = repository.findById(userId)
