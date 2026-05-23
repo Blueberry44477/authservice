@@ -29,7 +29,7 @@ public class SignupRequest {
     @JsonProperty(value = "first_name")
     private String firstName;
 
-    @Size(max = 20, message = "Last name must be less than 20 symbols")
+    @Size(max = 30, message = "Last name must be less than 20 symbols")
     @JsonProperty(value = "last_name")
     private String lastName;
 

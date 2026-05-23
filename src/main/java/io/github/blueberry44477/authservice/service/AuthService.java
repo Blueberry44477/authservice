@@ -1,12 +1,12 @@
 package io.github.blueberry44477.authservice.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -49,5 +49,33 @@ public class AuthService {
 
         User user = userMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+    }
+
+    @Transactional
+    public void signupBatch(List<SignupRequest> requests) {
+        if (requests == null || requests.isEmpty()) {
+            return;
+        }
+
+        List<String> emailsToCheck = requests.stream()
+                .map(SignupRequest::getEmail)
+                .toList();
+
+        Set<String> existingEmails = repository.findExistingEmails(emailsToCheck);
+
+        List<User> usersToSave = new ArrayList<>();
+
+        for (SignupRequest request : requests) {
+            if (existingEmails.contains(request.getEmail())) {
+                throw new EmailAlreadyUsedException(request.getEmail());
+            }
+
+            User user = userMapper.toEntity(request);
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            
+            usersToSave.add(user);
+        }
+
+        repository.saveAll(usersToSave);
     }
 }

@@ -9,8 +9,9 @@ import org.springframework.data.repository.query.Param;
 
 import io.github.blueberry44477.authservice.model.User;
 
+import java.util.List;
 import java.util.Optional;
-
+import java.util.Set;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     @EntityGraph(attributePaths = {"friends"})
@@ -18,6 +19,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     
     @EntityGraph(attributePaths = {"friends"})
     Optional<User> findByEmail(String email);
+
+    @Query("SELECT u.email FROM User u WHERE u.email IN :emailsToCheck")
+    Set<String> findExistingEmails(@Param("emailsToCheck") List<String> emailsToCheck);
     
     boolean existsByEmail(String email);
 

@@ -2,6 +2,9 @@ package io.github.blueberry44477.authservice.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,8 +28,18 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<Void> signup(@Valid @RequestBody SignupRequest request) {
+    public ResponseEntity<Void> signup(
+        @Valid @RequestBody SignupRequest request
+    ) {
         service.signup(request);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PostMapping("/batch")
+    public ResponseEntity<Void> signupBatch(
+        @Valid @RequestBody List<SignupRequest> requests
+    ) {
+        service.signupBatch(requests);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
