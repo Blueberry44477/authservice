@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.github.blueberry44477.authservice.dto.UserDto;
+import io.github.blueberry44477.authservice.dto.request.FriendshipRequest;
 import io.github.blueberry44477.authservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 
@@ -12,7 +13,12 @@ import java.security.Principal;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RequiredArgsConstructor
 @RestController
@@ -20,12 +26,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class MainController {
     private final UserService service;
 
-    @GetMapping("/user")
-    public String userAccess(Principal principal) {
-        if (principal == null)
-            return null;
-        return principal.getName();
-    }
+    // @GetMapping("/user")
+    // public String userAccess(Principal principal) {
+    //     if (principal == null)
+    //         return null;
+    //     return principal.getName();
+    // }
 
     @GetMapping("/users")
     public Page<UserDto> getUsers(
@@ -41,4 +47,14 @@ public class MainController {
     ) {
         return service.getFriendsByEmail(principal.getName(), pageable);
     }
+
+    @PostMapping("/friendship")
+    public ResponseEntity<Void> addFriend(
+        Principal principal,
+        @RequestBody FriendshipRequest request
+    ) {
+        service.addFriend(principal.getName(), request.getFriendEmail());
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+    
 }
