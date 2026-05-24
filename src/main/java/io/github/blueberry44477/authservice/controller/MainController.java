@@ -48,7 +48,7 @@ public class MainController {
         return service.getFriendsByEmail(principal.getName(), pageable);
     }
 
-    @PostMapping("/friendship")
+    @PostMapping("/friends/add")
     public ResponseEntity<Void> addFriend(
         Principal principal,
         @RequestBody FriendshipRequest request
@@ -56,5 +56,13 @@ public class MainController {
         service.addFriend(principal.getName(), request.getFriendEmail());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
-    
+
+    @PostMapping("/friends/remove")
+    public ResponseEntity<Void> removeFriend(
+        Principal principal,
+        @RequestBody FriendshipRequest request
+    ) {
+        service.removeFriend(principal.getName(), request.getFriendEmail());
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
 }

@@ -49,23 +49,22 @@ public class UserService implements UserDetailsService {
         }
 
         User user = repository.findByEmail(userEmail)
-            .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + userEmail));
+            .orElseThrow(() -> new EntityNotFoundException("User", userEmail));
         User friend = repository.findByEmail(friendEmail)
-            .orElseThrow(() -> new EntityNotFoundException("Friend not found with email: " + friendEmail));
+            .orElseThrow(() -> new EntityNotFoundException("User", friendEmail));
 
         user.getFriends().add(friend);
         repository.save(user); 
     }
 
-    //TODO
-    // @Transactional
-    // public void removeFriend(Long userId, Long friendId) {
-    //     User user = repository.findById(userId)
-    //             .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
-    //     User friend = repository.findById(friendId)
-    //             .orElseThrow(() -> new EntityNotFoundException("Friend not found with id: " + friendId));
+    @Transactional
+    public void removeFriend(String userEmail, String friendEmail) {
+        User user = repository.findByEmail(userEmail)
+                .orElseThrow(() -> new EntityNotFoundException("User", userEmail));
+        User friend = repository.findByEmail(friendEmail)
+                .orElseThrow(() -> new EntityNotFoundException("User", friendEmail));
 
-    //     user.getFriends().remove(friend);
-    //     repository.save(user);
-    // }
+        user.getFriends().remove(friend);
+        repository.save(user);
+    }
 }
