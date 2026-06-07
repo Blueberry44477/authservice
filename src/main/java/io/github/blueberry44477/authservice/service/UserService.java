@@ -67,4 +67,15 @@ public class UserService implements UserDetailsService {
         user.getFriends().remove(friend);
         repository.save(user);
     }
+
+    public byte[] getAvatar(String email) {
+        User user = repository.findByEmail(email)
+            .orElseThrow(() -> new EntityNotFoundException("User", email));
+        
+        if (user.getAvatar() == null) {
+            throw new EntityNotFoundException("User with email: " + email + "does not have an avatar");
+        }
+
+        return user.getAvatar();
+    }
 }
