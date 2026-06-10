@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class SignInResponse {
+public class AccessTokenDTO {
     private String accessToken;
     private String tokenType;
     private Long expiresIn; // In seconds.

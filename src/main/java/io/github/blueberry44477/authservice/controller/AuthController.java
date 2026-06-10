@@ -9,13 +9,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.github.blueberry44477.authservice.component.CookieBuilder;
-import io.github.blueberry44477.authservice.dto.SignInResponse;
+import io.github.blueberry44477.authservice.dto.AccessTokenDTO;
+import io.github.blueberry44477.authservice.dto.TokensDTO;
 import io.github.blueberry44477.authservice.dto.request.SigninRequest;
 import io.github.blueberry44477.authservice.dto.request.SignupRequest;
 import io.github.blueberry44477.authservice.model.RefreshToken;
@@ -31,8 +33,8 @@ public class AuthController {
     private final CookieBuilder cookieBuilder;
 
     @PostMapping("/signin")
-    public ResponseEntity<SignInResponse> signin(@Valid @RequestBody SigninRequest request) {
-        SignInResponse response = service.signin(request);
+    public ResponseEntity<AccessTokenDTO> signin(@Valid @RequestBody SigninRequest request) {
+        AccessTokenDTO response = service.signin(request);
 
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(request.getEmail());
         ResponseCookie cookie = cookieBuilder.refreshToken(refreshToken.getToken());
@@ -40,6 +42,18 @@ public class AuthController {
         return ResponseEntity.ok()
                              .header(HttpHeaders.SET_COOKIE, cookie.toString())
                              .body(response);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AccessTokenDTO> refreshTokens(
+        @CookieValue("refreshToken") String refreshToken
+    ) {
+        TokensDTO response = refreshTokenService.refreshTokens(refreshToken);
+        ResponseCookie cookie = cookieBuilder.refreshToken(response.getRefreshToken());
+
+        return ResponseEntity.ok()
+                             .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                             .body(response.getAccessToken());
     }
 
     @PostMapping("/signup")

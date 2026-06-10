@@ -19,7 +19,7 @@ public class CookieBuilder {
         return ResponseCookie.from("refreshToken", token)
                 .httpOnly(true)
                 .secure(true)
-                .sameSite("Strict")
+                .sameSite("None")
                 .path(refreshTokenPath)
                 .maxAge(refreshExpirationInSeconds)
                 .build();
@@ -29,7 +29,7 @@ public class CookieBuilder {
         return ResponseCookie.from("refreshToken", "")
                 .httpOnly(true)
                 .secure(true)
-                .sameSite("Strict")
+                .sameSite("None")
                 .path(refreshTokenPath)
                 .maxAge(0)
                 .build();

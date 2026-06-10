@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class RefreshTokenResponse {
-    private String accessToken;
+public class TokensDTO {
+    private AccessTokenDTO accessToken;
     private String refreshToken;
 }

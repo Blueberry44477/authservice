@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.github.blueberry44477.authservice.dto.AccessTokenDTO;
+import io.github.blueberry44477.authservice.dto.TokensDTO;
+import io.github.blueberry44477.authservice.exception.TokenRefreshException;
 import io.github.blueberry44477.authservice.model.RefreshToken;
 import io.github.blueberry44477.authservice.repository.RefreshTokenRepository;
 import lombok.Getter;
@@ -16,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class RefreshTokenService {
     private final RefreshTokenRepository repository;
+    private final JwtCore jwtCore;
 
     @Getter
     @Value("${jwt.refresh-token-expiration}")
@@ -28,29 +32,35 @@ public class RefreshTokenService {
         RefreshToken token = new RefreshToken();
         token.setEmail(email)
              .setToken(UUID.randomUUID().toString())
-             .setExpiryDate(Instant.now().plusMillis(expiration));
+             .setExpiryDate(Instant.now().plusSeconds(expiration));
 
         return repository.save(token);
     }
 
 
-    // @Transactional
-    // public TokenRefreshResponse refreshAccessToken(String requestToken) {
-    //     return refreshTokenRepository.findByToken(requestToken)
-    //             .map(this::verifyExpiration)
-    //             .map(RefreshToken::getEmail) // Using email instead of username per schema choices
-    //             .map(email -> {
-    //                 String accessToken = jwtCore.generateTokenFromUsername(email);
-    //                 return new TokenRefreshResponse(accessToken, requestToken);
-    //             })
-    //             .orElseThrow(() -> new TokenRefreshException(requestToken, "Refresh token is not in database."));
-    // }
+    @Transactional
+    public TokensDTO refreshTokens(String refreshToken) {
+        RefreshToken oldToken = repository.findByToken(refreshToken)
+                                          .map(this::verifyExpiration)
+                                          .orElseThrow(() -> new TokenRefreshException(refreshToken, "Refresh token is not in database."));
+                        
+        String email = oldToken.getEmail();
+        repository.delete(oldToken);
 
-    // private RefreshToken verifyExpiration(RefreshToken token) {
-    //     if (token.getExpiryDate().isBefore(java.time.Instant.now())) {
-    //         refreshTokenRepository.delete(token);
-    //         throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please sign in again.");
-    //     }
-    //     return token;
-    // }
+        RefreshToken newRefreshToken = createRefreshToken(email);
+
+        AccessTokenDTO accessToken = new AccessTokenDTO(jwtCore.generateToken(email),
+                                                        jwtCore.getTokenType(),
+                                                        jwtCore.getLifetimeInSeconds());
+
+        return new TokensDTO(accessToken, newRefreshToken.getToken());
+    }
+
+    private RefreshToken verifyExpiration(RefreshToken token) {
+        if (token.getExpiryDate().isBefore(java.time.Instant.now())) {
+            repository.delete(token);
+            throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please sign in again.");
+        }
+        return token;
+    }
 }
