@@ -15,7 +15,7 @@ spring:
     enabled: true
     change-log: classpath:/db/changelog/changelog-master.xml
   datasource:
-    url: jdbc:mysql://localhost:3306/authService?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false
+    url: ${DB_URL:jdbc:mysql://localhost:3306/authService?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false}
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:}
     hikari:
@@ -25,9 +25,15 @@ spring:
       leak-detection-threshold: 10000
       idle-timeout: 120000
     type: com.zaxxer.hikari.HikariDataSource
+
+# Test Purposes.
 jwt:
   secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
-  expiration: 86400000 # 24 hours in milliseconds
+  expiration: 300000 # 5 mins.
+  token-type: "Bearer"
+  refresh-token-expiration: 86400000 # 24 hours in milliseconds
+  refresh-token-path: /api/v1/auth/refresh
+
 # logging:
 #   level:
 #     root: INFO

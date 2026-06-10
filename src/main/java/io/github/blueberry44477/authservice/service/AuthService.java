@@ -12,7 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.github.blueberry44477.authservice.JwtCore;
+import io.github.blueberry44477.authservice.dto.SignInResponse;
 import io.github.blueberry44477.authservice.dto.UserDetailsImpl;
 import io.github.blueberry44477.authservice.dto.request.SigninRequest;
 import io.github.blueberry44477.authservice.dto.request.SignupRequest;
@@ -32,13 +32,16 @@ public class AuthService {
     private final JwtCore jwtCore;
 
     @Transactional(readOnly = true)
-    public String signin(SigninRequest request) {
+    public SignInResponse signin(SigninRequest request) {
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        return jwtCore.generateToken(userDetails);
+
+        return new SignInResponse(jwtCore.generateToken(userDetails), 
+                                  jwtCore.getTokenType(),
+                                  jwtCore.getLifetimeInSeconds());
     }
 
     @Transactional

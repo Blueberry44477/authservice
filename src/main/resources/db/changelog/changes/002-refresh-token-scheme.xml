@@ -1,0 +1,41 @@
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+   
+    <changeSet id="09-06-2026-001" author="blueberry44477">
+        <comment>Create Refresh Tokens Table</comment>
+
+        <createTable tableName="refresh_token">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_refresh_token"/>
+            </column>
+
+            <column name="token" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_refresh_token_token"/>
+            </column>
+
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="expiry_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="refresh_token"
+                                 baseColumnNames="email" 
+                                 constraintName="fk_refresh_token_email_user_email" 
+                                 referencedTableName="user" 
+                                 referencedColumnNames="email"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+
+        <createIndex tableName="refresh_token" indexName="idx_refresh_token_email">
+            <column name="email"/>
+        </createIndex>
+   </changeSet>
+</databaseChangeLog>

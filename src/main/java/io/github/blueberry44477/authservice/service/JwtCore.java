@@ -1,34 +1,38 @@
-package io.github.blueberry44477.authservice;
+package io.github.blueberry44477.authservice.service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.function.Function;
 
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import io.github.blueberry44477.authservice.dto.UserDetailsImpl;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.Getter;
 
 @Service
 public class JwtCore {
     @Value("${jwt.secret}")
     private String secret;
 
+    @Getter
     @Value("${jwt.expiration}")
     private Long lifetime;
 
+    @Getter
+    @Value("${jwt.token-type}")
+    private String tokenType;
+
     public String generateToken(UserDetailsImpl userDetails) {
+        return generateToken(userDetails.getUsername());
+    }
+
+    public String generateToken(String username) {
         return Jwts.builder()
-                   .subject(userDetails.getUsername())
+                   .subject(username)
                    .issuedAt(new Date(System.currentTimeMillis()))
                    .expiration(new Date(System.currentTimeMillis() + lifetime))
                    .signWith(getSigningKey(), Jwts.SIG.HS256)
@@ -40,7 +44,6 @@ public class JwtCore {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-
     public String extractUsername(String token) {
         return Jwts.parser()
                    .verifyWith(getSigningKey())
@@ -48,6 +51,10 @@ public class JwtCore {
                    .parseSignedClaims(token)
                    .getPayload()
                    .getSubject();
+    }
+
+    public Long getLifetimeInSeconds() {
+        return lifetime / 1000;
     }
 
     // public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {

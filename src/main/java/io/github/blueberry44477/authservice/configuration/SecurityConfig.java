@@ -15,7 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import io.github.blueberry44477.authservice.TokenFilter;
+import io.github.blueberry44477.authservice.component.TokenFilter;
 import io.github.blueberry44477.authservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 

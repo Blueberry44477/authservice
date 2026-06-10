@@ -1,4 +1,4 @@
-package io.github.blueberry44477.authservice;
+package io.github.blueberry44477.authservice.component;
 
 import java.io.IOException;
 
@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import io.github.blueberry44477.authservice.service.JwtCore;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
