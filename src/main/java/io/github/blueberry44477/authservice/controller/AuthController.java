@@ -57,6 +57,19 @@ public class AuthController {
                              .body(response.getAccessToken());
     }
 
+    @PostMapping("/sign-out")
+    public ResponseEntity<Void> signOut(
+        @CookieValue(required = false) String refreshToken
+    ) {
+        if (refreshToken != null) {
+            service.revokeUserSession(refreshToken);
+        }
+        ResponseCookie deleteCookie = cookieBuilder.deleteRefreshToken();
+        return ResponseEntity.ok()
+                             .header(HttpHeaders.SET_COOKIE, deleteCookie.toString())
+                             .build();
+    }
+
     @PostMapping("/sign-up")
     public ResponseEntity<Void> signUp(
         @Valid @RequestBody SignUpRequest request

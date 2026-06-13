@@ -19,13 +19,17 @@ import io.github.blueberry44477.authservice.dto.request.SignUpRequest;
 import io.github.blueberry44477.authservice.exception.EmailAlreadyUsedException;
 import io.github.blueberry44477.authservice.mapper.UserMapStruct;
 import io.github.blueberry44477.authservice.model.User;
+import io.github.blueberry44477.authservice.repository.RefreshTokenRepository;
 import io.github.blueberry44477.authservice.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
     private final UserRepository repository;
+    private final RefreshTokenRepository refreshTokenRepository;
+
     private final PasswordEncoder passwordEncoder;
     private final UserMapStruct userMapper;
     private final AuthenticationManager authenticationManager;
@@ -53,6 +57,11 @@ public class AuthService {
 
         User user = userMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+    }
+
+    @Transactional
+    public void revokeUserSession(String refreshToken) {
+        refreshTokenRepository.deleteByToken(refreshToken);
     }
 
     @Transactional
