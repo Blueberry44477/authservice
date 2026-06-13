@@ -23,7 +23,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class SignupRequest {
+public class SignUpRequest {
     @NotBlank(message = "First name is required")
     @Size(min = 2, max = 20, message = "First name must be between 2 and 20 symbols")
     @JsonProperty(value = "first_name")

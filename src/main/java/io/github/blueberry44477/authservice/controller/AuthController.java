@@ -1,6 +1,7 @@
 package io.github.blueberry44477.authservice.controller;
 
 import jakarta.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -18,8 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import io.github.blueberry44477.authservice.component.CookieBuilder;
 import io.github.blueberry44477.authservice.dto.AccessTokenDTO;
 import io.github.blueberry44477.authservice.dto.TokensDTO;
-import io.github.blueberry44477.authservice.dto.request.SigninRequest;
-import io.github.blueberry44477.authservice.dto.request.SignupRequest;
+import io.github.blueberry44477.authservice.dto.request.SignInRequest;
+import io.github.blueberry44477.authservice.dto.request.SignUpRequest;
 import io.github.blueberry44477.authservice.model.RefreshToken;
 import io.github.blueberry44477.authservice.service.AuthService;
 import io.github.blueberry44477.authservice.service.RefreshTokenService;
@@ -32,9 +33,9 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
     private final CookieBuilder cookieBuilder;
 
-    @PostMapping("/signin")
-    public ResponseEntity<AccessTokenDTO> signin(@Valid @RequestBody SigninRequest request) {
-        AccessTokenDTO response = service.signin(request);
+    @PostMapping("/sign-in")
+    public ResponseEntity<AccessTokenDTO> signIn(@Valid @RequestBody SignInRequest request) {
+        AccessTokenDTO response = service.signIn(request);
 
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(request.getEmail());
         ResponseCookie cookie = cookieBuilder.refreshToken(refreshToken.getToken());
@@ -46,7 +47,7 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<AccessTokenDTO> refreshTokens(
-        @CookieValue("refreshToken") String refreshToken
+        @CookieValue String refreshToken
     ) {
         TokensDTO response = refreshTokenService.refreshTokens(refreshToken);
         ResponseCookie cookie = cookieBuilder.refreshToken(response.getRefreshToken());
@@ -56,19 +57,19 @@ public class AuthController {
                              .body(response.getAccessToken());
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity<Void> signup(
-        @Valid @RequestBody SignupRequest request
+    @PostMapping("/sign-up")
+    public ResponseEntity<Void> signUp(
+        @Valid @RequestBody SignUpRequest request
     ) {
-        service.signup(request);
+        service.signUp(request);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping("/batch")
-    public ResponseEntity<Void> signupBatch(
-        @Valid @RequestBody List<SignupRequest> requests
+    public ResponseEntity<Void> signUpBatch(
+        @Valid @RequestBody List<SignUpRequest> requests
     ) {
-        service.signupBatch(requests);
+        service.signUpBatch(requests);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

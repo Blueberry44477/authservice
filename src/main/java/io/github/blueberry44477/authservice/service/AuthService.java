@@ -14,8 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import io.github.blueberry44477.authservice.dto.AccessTokenDTO;
 import io.github.blueberry44477.authservice.dto.UserDetailsImpl;
-import io.github.blueberry44477.authservice.dto.request.SigninRequest;
-import io.github.blueberry44477.authservice.dto.request.SignupRequest;
+import io.github.blueberry44477.authservice.dto.request.SignInRequest;
+import io.github.blueberry44477.authservice.dto.request.SignUpRequest;
 import io.github.blueberry44477.authservice.exception.EmailAlreadyUsedException;
 import io.github.blueberry44477.authservice.mapper.UserMapStruct;
 import io.github.blueberry44477.authservice.model.User;
@@ -32,7 +32,7 @@ public class AuthService {
     private final JwtCore jwtCore;
 
     @Transactional(readOnly = true)
-    public AccessTokenDTO signin(SigninRequest request) {
+    public AccessTokenDTO signIn(SignInRequest request) {
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
@@ -46,7 +46,7 @@ public class AuthService {
     }
 
     @Transactional
-    public void signup(SignupRequest request) {
+    public void signUp(SignUpRequest request) {
         if (repository.existsByEmail(request.getEmail())) {
             throw new EmailAlreadyUsedException(request.getEmail());
         }
@@ -56,20 +56,20 @@ public class AuthService {
     }
 
     @Transactional
-    public void signupBatch(List<SignupRequest> requests) {
+    public void signUpBatch(List<SignUpRequest> requests) {
         if (requests == null || requests.isEmpty()) {
             return;
         }
 
         List<String> emailsToCheck = requests.stream()
-                                             .map(SignupRequest::getEmail)
+                                             .map(SignUpRequest::getEmail)
                                              .toList();
 
         Set<String> existingEmails = repository.findExistingEmails(emailsToCheck);
 
         List<User> usersToSave = new ArrayList<>();
 
-        for (SignupRequest request : requests) {
+        for (SignUpRequest request : requests) {
             if (existingEmails.contains(request.getEmail())) {
                 throw new EmailAlreadyUsedException(request.getEmail());
             }
